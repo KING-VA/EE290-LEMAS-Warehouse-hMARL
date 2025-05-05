@@ -1,0 +1,6 @@
+[submodule "TA-RWARE"]
+	path = TA-RWARE
+	url = https://github.com/KING-VA/task-assignment-robotic-warehouse.git
+[submodule "pyastar2d_TARWARE"]
+	path = pyastar2d_TARWARE
+	url = https://github.com/KING-VA/pyastar2d_TARWARE.git
