@@ -1,2 +1,3 @@
+# Use python 3.10
 # Remember to install tarware using 'pip install -e TA-RWARE'
 
