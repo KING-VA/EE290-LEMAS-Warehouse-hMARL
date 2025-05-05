@@ -48,6 +48,10 @@ if __name__ == "__main__":
     env = gym.make("tarware-tiny-14agvs-7pickers-partialobs-v1")
     seed = args.seed
     completed_episodes = 0
+    print("A Peak into Action and Observation Space:")
+    print(f"Action Space: {env.action_space}")
+    print(f"Observation Space: {env.observation_space}")
+    print("Starting Heuristic Agent Test")
     for i in range(args.num_episodes):
         start = time.time()
         infos, global_episode_return, episode_returns = heuristic_episode(env.unwrapped, args.render, seed+i)
