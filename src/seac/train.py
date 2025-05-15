@@ -250,6 +250,7 @@ def main(
                     all_infos.append(info)
 
         # value_loss, action_loss, dist_entropy = agent.update(rollouts)
+        # print(f"Num Updates Done: {j}")
         for agent in agents:
             agent.compute_returns()
 
