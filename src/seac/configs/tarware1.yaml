@@ -1,0 +1,3 @@
+env_name: tarware-tiny-14agvs-7pickers-partialobs-v1
+num_env_steps: 120000000.0
+time_limit: 500

@@ -1,3 +1,9 @@
 # Use python 3.10
 # Remember to install tarware using 'pip install -e TA-RWARE'
 
+gymnasium
+numpy
+sacred
+stable_baselines3
+torch
+PyYAML

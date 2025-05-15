@@ -2,6 +2,7 @@ import time
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import gymnasium as gym
+# from gymnasium.wrappers import RecordVideo
 
 from tarware.heuristic import heuristic_episode
 
@@ -46,6 +47,8 @@ def info_statistics(infos, global_episode_return, episode_returns):
 
 if __name__ == "__main__":
     env = gym.make("tarware-tiny-14agvs-7pickers-partialobs-v1")
+    # env = RecordVideo(env, video_folder="./videos", name_prefix="test", disable_logger=True, step_trigger=lambda x: True)
+    # env.start_recording("test")
     seed = args.seed
     completed_episodes = 0
     print("A Peak into Action and Observation Space:")
@@ -61,3 +64,6 @@ if __name__ == "__main__":
         episode_length = len(infos)
         print(f"Completed Episode {completed_episodes}: | [Overall Pick Rate={last_info.get('overall_pick_rate'):.2f}]| [Global return={last_info.get('global_episode_return'):.2f}]| [Total shelf deliveries={last_info.get('total_deliveries'):.2f}]| [Total clashes={last_info.get('total_clashes'):.2f}]| [Total stuck={last_info.get('total_stuck'):.2f}] | [FPS = {episode_length/(end-start):.2f}]")
         completed_episodes += 1
+    # env.stop_recording()
+    # env.close()
+    
