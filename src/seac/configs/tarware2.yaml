@@ -1,0 +1,3 @@
+env_name: tarware-tiny-10agvs-5pickers-globalobs-v1
+num_env_steps: 10000000.0
+time_limit: 5000

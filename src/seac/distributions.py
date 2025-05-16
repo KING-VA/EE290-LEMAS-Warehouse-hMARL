@@ -37,6 +37,9 @@ class Categorical(nn.Module):
 
         self.linear = init_(nn.Linear(num_inputs, num_outputs))
 
-    def forward(self, x):
+    def forward(self, x, action_mask=None):
         x = self.linear(x)
+        if action_mask is not None:
+            # Mask logits: set invalid actions to a large negative value
+            x = x + (torch.log(action_mask.float() + 1e-8))
         return FixedCategorical(logits=x)

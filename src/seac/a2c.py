@@ -33,8 +33,8 @@ def config():
 
     seac_coef = 1.0
 
-    num_processes = 4
-    num_steps = 5
+    num_processes = 32
+    num_steps = 100
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
 

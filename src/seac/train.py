@@ -55,10 +55,10 @@ def config():
     loss_dir = "./results/loss/{id}"
     save_dir = "./results/trained_models/{id}"
 
-    log_interval = 2000
-    save_interval = int(1e6)
-    eval_interval = int(1e6)
-    episodes_per_eval = 8
+    log_interval = 200
+    save_interval = int(2000)
+    eval_interval = int(8000)
+    episodes_per_eval = 4
 
 
 for conf in glob.glob("configs/*.yaml"):
@@ -70,9 +70,12 @@ def _squash_info(info):
     new_info = {}
     keys = set([k for i in info for k in i.keys()])
     keys.discard("TimeLimit.truncated")
+    # Remove any keys of the form "agentX/episode_reward" and "terminal_observation"
+    keys = [k for k in keys if not k.startswith("agent") and not k.startswith("terminal_observation")]
     for key in keys:
         mean = np.mean([np.array(d[key]).sum() for d in info if key in d])
         new_info[key] = mean
+    print(f"Squashed info: {new_info}")
     return new_info
 
 
@@ -91,7 +94,7 @@ def evaluate(
 
     eval_envs = make_vec_envs(
         env_name,
-        seed,
+        int(seed),
         dummy_vecenv,
         episodes_per_eval,
         wrappers,
@@ -130,12 +133,14 @@ def evaluate(
             dtype=torch.float32,
             device=device,
         )
-        all_infos.extend([i for i in infos if i])
+        for info in infos:
+            if info:
+                all_infos.append(info)
 
     eval_envs.close()
     info = _squash_info(all_infos)
     _log.info(
-        f"Evaluation using {len(all_infos)} episodes: mean reward {info['episode_reward']:.5f}\n"
+        f"Evaluation using {len(all_infos)} episodes: shelf deliveries {info['shelf_deliveries']:.5f}\n"
     )
 
 
@@ -208,7 +213,11 @@ def main(
     for j in range(1, num_updates + 1):
 
         for step in range(algorithm["num_steps"]):
+            
             # Sample actions
+            valid_action_masks = envs.env_method("compute_valid_action_masks")
+            valid_action_masks = np.array(valid_action_masks)
+            valid_action_masks = np.swapaxes(valid_action_masks, 0, 1)
             with torch.no_grad():
                 n_value, n_action, n_action_log_prob, n_recurrent_hidden_states = zip(
                     *[
@@ -216,8 +225,9 @@ def main(
                             agent.storage.obs[step],
                             agent.storage.recurrent_hidden_states[step],
                             agent.storage.masks[step],
+                            action_mask=torch.tensor(valid_action_masks[i], device=algorithm["device"]),
                         )
-                        for agent in agents
+                        for i, agent in enumerate(agents)
                     ]
                 )
             # Obser reward and next obs
@@ -297,7 +307,7 @@ def main(
             j > 0 and j % eval_interval == 0 or j == num_updates
         ):
             evaluate(
-                agents, os.path.join(eval_dir, f"u{j}"),
+                agents, #os.path.join(eval_dir, f"u{j}"),
             )
             videos = glob.glob(os.path.join(eval_dir, f"u{j}") + "/*.mp4")
             for i, v in enumerate(videos):

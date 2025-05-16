@@ -28,7 +28,7 @@ def make_env(env_id, seed, rank, wrappers):
 
 
 def make_vec_envs(
-    env_name, seed, dummy_vecenv, parallel, wrappers, device
+    env_name: str, seed: int, dummy_vecenv: bool, parallel: int, wrappers, device
 ):
     envs = [
         make_env(env_name, seed, i, wrappers) for i in range(parallel)
